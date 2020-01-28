@@ -26,7 +26,7 @@ public class BarrigaTest extends BaseTest {
 	@Test
 	public void deveIncluirContaComSucesso() {
 		Map<String, String> login = new HashMap<>();
-		login.put("email", "wagner@aquino");
+		login.put("email", "henrique@henrique");
 		login.put("senha", "123456");
 		
 		
@@ -46,7 +46,7 @@ public class BarrigaTest extends BaseTest {
 		
 		given()
 			.header("Authorization", "JWT " + token)
-			.body("{\"nome\": \"conta henrique\" }")
+			.body("{\"nome\": \"Conta Henrique\" }")
 		.when()
 			.post("/contas")
 		.then()
