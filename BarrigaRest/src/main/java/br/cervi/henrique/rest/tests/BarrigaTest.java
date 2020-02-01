@@ -37,6 +37,7 @@ public class BarrigaTest extends BaseTest {
 		.when()
 			.post("/signin")
 		.then()
+			.log().all()
 			.statusCode(200)
 			.extract().path("token");
 		
@@ -46,7 +47,9 @@ public class BarrigaTest extends BaseTest {
 		
 		given()
 			.header("Authorization", "JWT " + token)
-			.body("{\"nome\": \"Conta Henrique\" }")
+			// criando json para o eclipse incluir as barras.
+			// { "nome": "Conta Henrique" }
+			.body("{\"nome\": \"Conta Bruna\" }")
 		.when()
 			.post("/contas")
 		.then()
@@ -55,8 +58,35 @@ public class BarrigaTest extends BaseTest {
 		;
 	}
 	
+	@Test
+	public void deveAlterarContaComSucesso() {
+		//praticamente mesmo processo do acima.
+		Map<String, String> login = new HashMap<>();
+		login.put("email", "henrique@henrique");
+		login.put("senha", "123456");
+		
+		String token = given()
+			.body(login)
+		.when()
+			.post("/signin")
+		.then()
+			.log().all()
+			.statusCode(200)
+			.extract().path("token")
+		;
+		
+		given()
+			.header("Authorization", "JWT " + token)
+			.body("{\"nome\": \"Conta Rique\" }")
+		.when()
+			.put("/contas/57966")
+		.then()
+			.log().all()
+			.statusCode(200)
+		;
+	}
+	
 
 }
 
-// criando json para o eclipse incluir as barras.
-// { "nome": "conta qualquer" }
+
