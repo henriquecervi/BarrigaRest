@@ -81,7 +81,6 @@ public class BarrigaTest extends BaseTest {
 	
 	@Test
 	public void naoDeveIncluirContaComNomeRepetido() {
-		//praticamente mesmo processo do acima.		
 		
 		given()
 			.header("Authorization", "JWT " + TOKEN)
@@ -92,6 +91,31 @@ public class BarrigaTest extends BaseTest {
 			.log().all()
 			.statusCode(400)
 			.body("error", is("Já existe uma conta com esse nome!"))
+			;
+
+	}
+	
+	@Test
+	public void deveInserirMovimentacaoComSucesso() {
+			Movimentacoes mov = new Movimentacoes();
+			
+			mov.setConta_id(57966);
+			//mov.setUsuario_id(usuario_id);
+			mov.setDescricao("Pagamento Facul Bruna");
+			mov.setEnvolvido("Bruna");
+			mov.setTipo("REC");
+			mov.setData_transacao("01/01/2020");
+			mov.setData_pagamento("30/01/2020");
+			mov.setValor(176.4f);
+			mov.setStatus(true);
+			
+		given()
+			.header("Authorization", "JWT " + TOKEN)
+			.body(mov)
+		.when()
+			.post("/transacoes")
+		.then()
+			.statusCode(201)
 			;
 
 	}
