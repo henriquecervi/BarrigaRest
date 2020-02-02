@@ -16,6 +16,22 @@ public class BarrigaTest extends BaseTest {
 	
 	private String TOKEN;
 	
+	private Movimentacoes getMovimentacoesValida() {
+		Movimentacoes mov = new Movimentacoes();
+		
+		mov.setConta_id(57966);
+		//mov.setUsuario_id(usuario_id);
+		mov.setDescricao("Pagamento Facul Bruna");
+		mov.setEnvolvido("Bruna");
+		mov.setTipo("REC");
+		mov.setData_transacao("01/01/2020");
+		mov.setData_pagamento("30/01/2020");
+		mov.setValor(176.4f);
+		mov.setStatus(true);
+		return mov;
+		
+	}
+	
 	@Before
 	public void login () {
 		
@@ -97,17 +113,19 @@ public class BarrigaTest extends BaseTest {
 	
 	@Test
 	public void deveInserirMovimentacaoComSucesso() {
-			Movimentacoes mov = new Movimentacoes();
-			
-			mov.setConta_id(57966);
-			//mov.setUsuario_id(usuario_id);
-			mov.setDescricao("Pagamento Facul Bruna");
-			mov.setEnvolvido("Bruna");
-			mov.setTipo("REC");
-			mov.setData_transacao("01/01/2020");
-			mov.setData_pagamento("30/01/2020");
-			mov.setValor(176.4f);
-			mov.setStatus(true);
+		Movimentacoes mov = getMovimentacoesValida();
+		
+//			Movimentacoes mov = new Movimentacoes();
+//			
+//			mov.setConta_id(57966);
+//			//mov.setUsuario_id(usuario_id);
+//			mov.setDescricao("Pagamento Facul Bruna");
+//			mov.setEnvolvido("Bruna");
+//			mov.setTipo("REC");
+//			mov.setData_transacao("01/01/2020");
+//			mov.setData_pagamento("30/01/2020");
+//			mov.setValor(176.4f);
+//			mov.setStatus(true);
 			
 		given()
 			.header("Authorization", "JWT " + TOKEN)
@@ -129,7 +147,7 @@ public class BarrigaTest extends BaseTest {
 	.when()
 		.post("/transacoes")
 	.then()
-		.statusCode(4)
+		.statusCode(400)
 		.body("$", hasSize(8))
 		.body("msg", hasItems(
 				"Data da Movimentação é obrigatório",
@@ -143,8 +161,31 @@ public class BarrigaTest extends BaseTest {
 				))
 		;
 
-
-		
 	}
+	
+	@Test
+	public void naoDeveCadastrarMovimentacaoFutura () {
+			Movimentacoes mov = getMovimentacoesValida();
+			
+			mov.setDescricao("Pagamento Cartão Nubank");
+			mov.setEnvolvido("Henrique");
+			mov.setData_transacao("03/02/2030");
+			mov.setData_pagamento("05/02/2030");
+			mov.setValor(1000f);
+			
+			
+			given()
+				.header("Authorization", "JWT " + TOKEN)
+				.body(mov)
+			.when()
+				.post("/transacoes")
+			.then()
+				.statusCode(400)
+				.body("msg", hasItem("Data da Movimentação deve ser menor ou igual à data atual"))
+			;
+			
+	}
+	
+	
 
 }
