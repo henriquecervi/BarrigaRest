@@ -181,9 +181,24 @@ public class BarrigaTest extends BaseTest {
 				.post("/transacoes")
 			.then()
 				.statusCode(400)
+				.body("$", hasSize(1))
 				.body("msg", hasItem("Data da Movimentação deve ser menor ou igual à data atual"))
 			;
 			
+	}
+	
+	@Test
+	public void naoDeveRemoverContaComMovimentacao () {
+				
+		given()
+			.header("Authorization", "JWT " + TOKEN)
+		.when()
+			.delete("/contas/57966")
+		.then()
+			.log().all()
+			.statusCode(500)
+			.body("constraint", is("transacoes_conta_id_foreign"))
+		;
 	}
 	
 	
