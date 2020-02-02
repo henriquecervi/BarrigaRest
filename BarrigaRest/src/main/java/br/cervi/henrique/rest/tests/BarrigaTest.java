@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hamcrest.core.IsNot;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -201,6 +202,19 @@ public class BarrigaTest extends BaseTest {
 		;
 	}
 	
+	@Test
+	public void deveCalcularSaldoDasContas () {
+		
+		given()
+			.header("Authorization", "JWT " + TOKEN)
+		.when()
+			.get("/saldo")
+		.then()
+			.statusCode(200)
+			.body("find{it.conta_id == 57966}.saldo", is("352.80")) // ele usa o find para achar apenas um elemento, (it, iterador).
+			
+		;
+	}
 	
 
 }
